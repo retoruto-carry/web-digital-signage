@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <h1>Screen</h1>
-    <p v-for="post in posts" :key="post.id">{{ post.url }}</p>
+  <div class="iframe-wrapper">
+    <vue-friendly-iframe :src="'http://btnmaker.me/'" />
   </div>
 </template>
 
@@ -27,3 +26,18 @@ export default Vue.extend({
   }
 })
 </script>
+
+<style lang="scss" scoped>
+.iframe-wrapper {
+  border: 1px solid gray;
+  height: 100vw;
+  .vue-friendly-iframe {
+    height: 100%;
+    width: 100%;
+    ::v-deep iframe {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+</style>

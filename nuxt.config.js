@@ -28,7 +28,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/firebase.ts'],
+  plugins: ['~/plugins/firebase.ts', '~/plugins/vue-friendly-iframe.js'],
   /*
    ** Nuxt.js dev-modules
    */
