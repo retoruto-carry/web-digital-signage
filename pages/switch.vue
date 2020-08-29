@@ -25,15 +25,16 @@ export default Vue.extend({
   async mounted() {
     const posts: Post[] = await getPosts()
     this.posts = posts
-    this.setNextPage(posts)
+    this.setNextPage(posts, 0)
   },
   methods: {
-    setNextPage(posts: Post[]) {
+    setNextPage(posts: Post[], index: number) {
       if (posts.length === 1) return
-      const post: Post = posts.shift() as Post
+      if (index >= posts.length) index = 0
+      const post: Post = posts[index] as Post
+      this.changePage(post.url)
       setTimeout(() => {
-        this.changePage(post.url)
-        this.setNextPage(posts)
+        this.setNextPage(posts, ++index)
       }, post.durationMillisecond)
     },
     changePage(url: string): void {
