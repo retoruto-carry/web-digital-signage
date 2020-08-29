@@ -34,7 +34,7 @@ export default Vue.extend({
       setTimeout(() => {
         this.changePage(post.url)
         this.setNextPage(posts)
-      }, 5000)
+      }, post.durationMillisecond)
     },
     changePage(url: string): void {
       this.url = url
