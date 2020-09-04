@@ -1,4 +1,4 @@
-import { Post } from '../../types/struct'
+import { Page } from '../../types/struct'
 import { DocumentNotExistError } from '../../types/error'
 
 type Document = firebase.firestore.DocumentSnapshot<
@@ -13,7 +13,7 @@ export function toObject<T>(doc: Document): T {
   return obj as T
 }
 
-export function toPost(doc: Document): Post {
+export function toPage(doc: Document): Page {
   if (!doc.exists) throw new DocumentNotExistError()
   const _doc: any = doc
   return {
