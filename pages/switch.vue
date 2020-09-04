@@ -1,6 +1,6 @@
 <template>
   <div class="iframe-wrapper">
-    <vue-friendly-iframe :src="'http://btnmaker.me/'" />
+    <vue-friendly-iframe :src="url" />
   </div>
 </template>
 
@@ -11,18 +11,35 @@ import { getPosts } from '~/utils/externals/firestore'
 
 type LocalData = {
   posts: Post[]
+  url: String
 }
 
 export default Vue.extend({
   layout: 'empty',
   data(): LocalData {
     return {
-      posts: []
+      posts: [],
+      url: 'https://btnmaker.me/'
     }
   },
-  async created() {
+  async mounted() {
     const posts: Post[] = await getPosts()
     this.posts = posts
+    this.setNextPage(posts, 0)
+  },
+  methods: {
+    setNextPage(posts: Post[], index: number) {
+      if (posts.length === 1) return
+      if (index >= posts.length) index = 0
+      const post: Post = posts[index] as Post
+      this.changePage(post.url)
+      setTimeout(() => {
+        this.setNextPage(posts, ++index)
+      }, post.durationMillisecond)
+    },
+    changePage(url: string): void {
+      this.url = url
+    }
   }
 })
 </script>
