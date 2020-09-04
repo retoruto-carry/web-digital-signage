@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="iframe-wrapper">
-      <vue-friendly-iframe v-if="pages.length" :src="pages[pageIndex].url" />
+      <vue-friendly-iframe
+        v-if="pages.length"
+        :src="interruptPage ? interruptPage.url : pages[pageIndex].url"
+      />
     </div>
   </div>
 </template>
@@ -10,20 +13,20 @@
 import Vue from 'vue'
 import { Page } from '~/types/struct'
 import { toPage } from '~/utils/transformer/toObject'
-import { firestore } from '~/utils/externals/firebase'
+import { firestore, firebase } from '~/utils/externals/firebase'
 
 type LocalData = {
+  interruptPage: Page | null
   pages: Page[]
   pageIndex: number
   timeoutId: NodeJS.Timeout | null
-  url: string
 }
 
 export default Vue.extend({
   layout: 'empty',
   data(): LocalData {
     return {
-      url: '',
+      interruptPage: null,
       pages: [],
       pageIndex: 0,
       timeoutId: null
@@ -31,20 +34,32 @@ export default Vue.extend({
   },
   mounted() {
     const pagesRef = firestore.collection('pages')
-    pagesRef.onSnapshot(
-      (docSnapshot) => {
-        const pages: Page[] = []
-        docSnapshot.forEach((doc) => {
-          pages.push(toPage(doc))
-        })
-        this.pages = pages
-        if (this.timeoutId) clearTimeout(this.timeoutId)
-        this.startLoop()
-      },
-      (err) => {
-        console.log(`Encountered error: ${err}`)
-      }
-    )
+    pagesRef.onSnapshot((querySnapShot) => {
+      const pages: Page[] = []
+      querySnapShot.forEach((doc) => {
+        pages.push(toPage(doc))
+      })
+      this.pages = pages
+      this.startLoop()
+    })
+    const interruptPagesRef = firestore
+      .collection('interruptPages')
+      .where(
+        'createdAt',
+        '>',
+        firebase.firestore.Timestamp.fromDate(new Date())
+      )
+    interruptPagesRef.onSnapshot((querySnapShot) => {
+      querySnapShot.docChanges().forEach((change) => {
+        if (change.type !== 'added') return
+        this.stopLoop()
+        this.interruptPage = toPage(change.doc)
+        setTimeout(() => {
+          this.interruptPage = null
+          this.startLoop()
+        }, this.interruptPage.durationMillisecond)
+      })
+    })
   },
   methods: {
     async startLoop(): Promise<void> {
@@ -61,6 +76,9 @@ export default Vue.extend({
           }, this.pages[this.pageIndex].durationMillisecond)
         })
       }
+    },
+    stopLoop(): void {
+      if (this.timeoutId) clearTimeout(this.timeoutId)
     }
   }
 })
