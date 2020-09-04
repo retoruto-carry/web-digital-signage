@@ -1,6 +1,6 @@
 import { firestore } from '~/utils/externals/firebase'
 import { Page } from '~/types/struct'
-import { toPost } from '~/utils/transformer/toObject'
+import { toPage } from '~/utils/transformer/toObject'
 
 export async function getPosts(): Promise<Page[]> {
   const pagesDoc = await firestore
@@ -9,7 +9,7 @@ export async function getPosts(): Promise<Page[]> {
     .get()
   return pagesDoc.docs.map(
     (postDoc): Page => {
-      return toPost(postDoc)
+      return toPage(postDoc)
     }
   ) as Page[]
 }
