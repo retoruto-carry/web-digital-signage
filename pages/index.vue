@@ -1,19 +1,19 @@
 <template>
   <div>
     <div class="iframe-wrapper">
-      <vue-friendly-iframe v-if="posts.length" :src="posts[pageIndex].url" />
+      <vue-friendly-iframe v-if="pages.length" :src="pages[pageIndex].url" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Post } from '~/types/struct'
-import { toPost } from '~/utils/transformer/toObject'
+import { Page } from '~/types/struct'
+import { toPage } from '~/utils/transformer/toObject'
 import { firestore } from '~/utils/externals/firebase'
 
 type LocalData = {
-  posts: Post[]
+  pages: Page[]
   pageIndex: number
   timeoutId: NodeJS.Timeout | null
   url: string
@@ -24,20 +24,20 @@ export default Vue.extend({
   data(): LocalData {
     return {
       url: '',
-      posts: [],
+      pages: [],
       pageIndex: 0,
       timeoutId: null
     }
   },
   mounted() {
-    const postsRef = firestore.collection('posts')
-    postsRef.onSnapshot(
+    const pagesRef = firestore.collection('pages')
+    pagesRef.onSnapshot(
       (docSnapshot) => {
-        const posts: Post[] = []
+        const pages: Page[] = []
         docSnapshot.forEach((doc) => {
-          posts.push(toPost(doc))
+          pages.push(toPage(doc))
         })
-        this.posts = posts
+        this.pages = pages
         if (this.timeoutId) clearTimeout(this.timeoutId)
         this.startLoop()
       },
@@ -51,13 +51,14 @@ export default Vue.extend({
       while (true) {
         await new Promise((resolve) => {
           this.timeoutId = setTimeout(() => {
-            if (this.pageIndex === this.posts.length - 1) {
+            if (this.pageIndex === this.pages.length - 1) {
               this.pageIndex = 0
               resolve()
+              return
             }
             this.pageIndex++
             resolve()
-          }, this.posts[this.pageIndex].durationMillisecond)
+          }, this.pages[this.pageIndex].durationMillisecond)
         })
       }
     }
