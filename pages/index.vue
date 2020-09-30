@@ -35,6 +35,7 @@ export default Vue.extend({
   mounted() {
     const pagesRef = firestore.collection('pages')
     pagesRef.onSnapshot((querySnapShot) => {
+      this.stopLoop()
       const pages: Page[] = []
       querySnapShot.forEach((doc) => {
         pages.push(toPage(doc))
