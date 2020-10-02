@@ -50,7 +50,8 @@ export default Vue.extend({
       )
     interruptPagesRef.onSnapshot((querySnapShot) => {
       querySnapShot.docChanges().forEach((change) => {
-        if (change.type !== 'added') return
+        // FIXME: 割り込みページを表示中に、さらに割り込まれたときは破棄するようになっている
+        if (change.type !== 'added' || this.interruptPage !== null) return
         this.stopLoop()
         this.interruptPage = toPage(change.doc)
         setTimeout(() => {
