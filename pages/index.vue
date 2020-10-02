@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <div class="iframe-wrapper">
-      <vue-friendly-iframe
-        v-if="pages.length"
-        :src="interruptPage ? interruptPage.url : pages[pageIndex].url"
-      />
-    </div>
+  <div class="iframe-wrapper">
+    <vue-friendly-iframe
+      v-if="pages.length"
+      :src="interruptPage ? interruptPage.url : pages[pageIndex].url"
+    />
   </div>
 </template>
 
@@ -86,9 +84,19 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  background-color: #191ca9;
+}
+
 .iframe-wrapper {
   border: 1px solid gray;
-  height: 100vw;
+  height: 100%;
   .vue-friendly-iframe {
     height: 100%;
     width: 100%;
