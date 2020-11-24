@@ -38,3 +38,7 @@ $ yarn generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+
+# 音声の自動再生許可の設定
+
+プライバシーとセキュリティ -> サイトの設定 -> コンテンツ -> その他コンテンツの設定 -> 音声の許可に、「web-digital-signage.vercel.app」を追加
