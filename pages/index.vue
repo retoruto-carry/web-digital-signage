@@ -90,6 +90,7 @@ html {
 }
 
 body {
+  overflow: hidden;
   height: 100%;
   margin: 0;
   background-color: #191ca9;
