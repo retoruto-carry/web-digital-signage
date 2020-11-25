@@ -90,6 +90,9 @@ html {
 }
 
 body {
+  ::-webkit-scrollbar {
+    display: none;
+  }
   overflow: hidden;
   height: 100%;
   margin: 0;
@@ -102,7 +105,14 @@ body {
   .vue-friendly-iframe {
     height: 100%;
     width: 100%;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    overflow: hidden;
     ::v-deep iframe {
+      ::-webkit-scrollbar {
+        display: none;
+      }
       height: 100%;
       width: 100%;
     }
